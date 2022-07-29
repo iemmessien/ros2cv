@@ -2,11 +2,9 @@
 Practical implementation of a publisher and subscriber with ROS2 and OpenCV.
 
 
-
 # Install ROS2
 
 Follow the instructions on the official doc to [install ROS2 Humble](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html).
-
 
 
 # Create a Local Workspace
@@ -38,7 +36,7 @@ Resolve package dependencies with rosdep because of possible missing dependencie
 
 # Build the Package
 
-- Build the workspace with Colcon. (Hint: cd to the root directory of your workspace, and then build.)
+Build the workspace with colcon. (Hint: cd to the root directory of your workspace, and then build.)
 
 ```
 >> cd ~/dev_ws
