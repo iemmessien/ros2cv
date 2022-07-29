@@ -16,7 +16,7 @@ Follow the instructions on the official doc to [install ROS2 Humble](https://doc
 >> mkdir -p ~/dev_ws/src
 ```
 
-Navigate to the workspace src subdirectory, and clone. (Hint: Ensure you’re in the dev_ws/src subdirectory before you clone.)
+Navigate to the workspace src subdirectory, and clone. (Hint: Ensure you are in the dev_ws/src subdirectory before you clone.)
 
 ```
 >> cd ~/dev_ws/src
@@ -38,7 +38,7 @@ Resolve package dependencies with rosdep because of possible missing dependencie
 
 # Build the Package
 
-- Build the workspace with Colcon. (Hint: Ensure you are in the root directory.)
+- Build the workspace with Colcon. (Hint: cd to the root directory of your workspace, and then build.)
 
 ```
 >> cd ~/dev_ws
@@ -46,7 +46,7 @@ Resolve package dependencies with rosdep because of possible missing dependencie
 ```
 
 # Run
-i) In a new terminal, source your ROS 2 environment.
+i) In a new terminal, source the ROS 2 environment (the underlay).
 
 ```
 >> source /opt/ros/humble/setup.bash
@@ -71,8 +71,9 @@ iv) Open a new terminal again, and source your ROS 2 environment, and your local
 >> source /opt/ros/humble/setup.bash
 >> cd ~/dev_ws
 >> . install/local_setup.bash
-
 ```
+
+
 v) Run the Subscriber.
 
 ```
