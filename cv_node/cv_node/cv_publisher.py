@@ -2,14 +2,14 @@
 import rclpy						# ROS 2 Client Library for Python
 from rclpy.node import Node			# Inherit from the Node Super Class to handle the creation of nodes
 
-from std_msgs.msg import String		# For a message type of String
-from sensor_msgs.msg import Image	# For a message type of Image
+from std_msgs.msg import String		# Import built-in String type for a message type of String
+from sensor_msgs.msg import Image	# Import built-in Image type for a message type of Image
 
-from cv_bridge import CvBridge 		# Package for converting between ROS 2 and OpenCV Images
-import cv2 							# The OpenCV library
+from cv_bridge import CvBridge 		# Import CVBridge from cv_bridge for converting between ROS 2 Images and OpenCV Images
+import cv2 							# Import the OpenCV library
 
-
-# Import the necessary packages
+'''
+# Import other necessary packages
 from scipy.spatial import distance as dist
 from imutils import perspective
 from imutils import contours
@@ -19,44 +19,52 @@ import imutils
 import cv2
 import math
 
-# Compute the mid-point of the two axes
+# Compute the mid-point of two axes to find the center of intersection
 def midpoint(ptA, ptB):
 	return ((ptA[0] + ptB[0]) * 0.5, (ptA[1] + ptB[1]) * 0.5)
+'''
 
-class SimplePublisher(Node):
-	# Create a publisher class which is a subclass of the Node super class
+# Create a publisher class which is a subclass of the Node super class
+class VisionPublisher(Node):
 	
+	# Define the VisionPublisher class's Constructor to set up the node which is an object of the Node super class
 	def __init__(self):
 		
-		# >> Class Constructor to set up the node
-		# Initiate the Node class's constructor and give it a name
-		super().__init__('simple_publisher')
+		# Initiate the Node class's constructor and give it a node name
+		super().__init__('vision_publisher_node')
 		
-		# Create the publisher
-		self.publisher_ = self.create_publisher(Image, 'video_frames', 10)
+		# Create the publisher with the type of message to be published and the name of the topic to publish on
+		# The last argument is the queue size; which is given a queue size of 10.
+		# "Queue size" is a required QoS (quality of service) setting that limits the amount of queued messages
+		# if a subscriber is not receiving them fast enough.
+		self.publisher_ = self.create_publisher(String, 'video_frames_topic', 10)
 		
-		timer_period = 0.5	# Publish a message every 0.5 seconds (2Hz)
+		timer_period = 0.5	# Publish a message every 0.5 seconds (A frequency of 2Hz)
 		
 		# Create the timer
 		self.timer = self.create_timer(timer_period, self.timer_callback)
 		
-		# Create a VideoCapture object
-		self.vid_cap = cv2.VideoCapture(0)
-		self.i = 0
+		# Create a VideoCapture object from the OpenCV libraray
+		#self.vid_cap = cv2.VideoCapture(0)
+		self.counter = 0
 		
-		# Used to convert between ROS 2 and OpenCV images
-		self.br = CvBridge()
-		
+		# Create an object of the CVBridge class to convert from OpenCV Image to ROS 2 Image format
+		#self.cv_rosbridge = CvBridge()
+	
+	#def capture_video():
+	
+	# Create a Callback function that gets called at each time period
 	def timer_callback(self):
-		# >> A Callback function
 		# This function gets called at each time period
 		
-		msg = String()
-		msg.data = 'Hello, World: %d' % self.i
+		my_message = String()
+		my_message.data = 'Hello, World: %d' % self.counter
 		
+		'''
 		# Capture each frame from the camera
 		ret, image = self.vid_cap.read()
 		
+		# Check if a frame is returned
 		if ret == True:
 			
 			orig = image.copy()
@@ -164,34 +172,40 @@ class SimplePublisher(Node):
 					(int(tl[0] - 20), int(tl[1] - 10)), cv2.FONT_HERSHEY_SIMPLEX,
 					1.0, (255, 0, 255), 2)
 			
-			# Publish the image data and an optional message
-			# The 'cv2_to_imgmsg' method converts an OpenCV
-			# image to a ROS 2 image message
-			self.publisher_.publish(self.br.cv2_to_imgmsg(orig))
+			# Publish the image data with an optional message
+			# The 'cv2_to_imgmsg' method of the CVBridge class converts an OpenCV
+			# Image to a ROS 2 Image format
+			self.publisher_.publish(self.cv_rosbridge.cv2_to_imgmsg(orig))
+		
+		# Capture frame end
+		'''
 		
 		# Display a message on the console
-		self.get_logger().info('Publishing...')
-		self.i += 1		# Keep count at each interval
-		
+		self.publisher_.publish(my_message)
+		self.get_logger().info('Publishing: "%s"' % my_message.data)       #.info('Publishing...')
+		self.counter += 1		# Keep count at each publishing time interval
+
+
 def main(args=None):
 	
-	# Initialize the rclpy library
+	# Initialize the ROS Client Library for Python
 	rclpy.init(args=args)
 	
-	# Create the node which is an object or instance of SimplePublisher
-	my_simple_publisher = SimplePublisher()
+	# Create the node which is an object or instance of the VisionPublisher class
+	my_vision_publisher = VisionPublisher()
 	
-	# Spin the node so the callback function is called
-	rclpy.spin(my_simple_publisher)
+	# Spin the node so that the callback function is called
+	rclpy.spin(my_vision_publisher)
 	
 	# Destroy the node explicitly
 	# (optional - otherwise it will be done automatically
 	# when the garbage collector destroys the node object)
-	my_simple_publisher.destroy_node()
+	my_vision_publisher.destroy_node()
 	
-	# Shutdown the ROS 2 Client Library for Python
+	# Shutdown the ROS Client Library for Python
 	rclpy.shutdown()
-	
+
+
 if __name__ == '__main__':
 	main()
 	
